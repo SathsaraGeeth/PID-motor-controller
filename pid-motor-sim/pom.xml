@@ -16,6 +16,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         <javafx.version>21</javafx.version>
         <main.class>com.sim.GUI</main.class>
+        <jpackage.type>exe</jpackage.type>
     </properties>
 
     <dependencies>
@@ -34,14 +35,12 @@
     <build>
         <plugins>
 
-            <!-- Compile -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
             </plugin>
 
-            <!-- Create fat JAR -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -61,7 +60,6 @@
                 </executions>
             </plugin>
 
-            <!-- Create custom runtime -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jlink-plugin</artifactId>
@@ -72,11 +70,11 @@
                 </configuration>
             </plugin>
 
-            <!-- Create installer -->
             <plugin>
                 <groupId>org.panteleyev</groupId>
                 <artifactId>jpackage-maven-plugin</artifactId>
                 <version>1.6.0</version>
+
                 <executions>
                     <execution>
                         <id>package-app</id>
@@ -84,13 +82,19 @@
                         <goals>
                             <goal>jpackage</goal>
                         </goals>
+
                         <configuration>
                             <name>PIDsim</name>
                             <appVersion>1.0</appVersion>
                             <vendor>Geeth</vendor>
-                            <mainClass>${main.class}</mainClass>
+
                             <input>${project.build.directory}</input>
+                            <destination>${project.build.directory}/installer</destination>
+
                             <mainJar>${project.build.finalName}.jar</mainJar>
+                            <mainClass>${main.class}</mainClass>
+
+                            <type>${jpackage.type}</type>
                         </configuration>
                     </execution>
                 </executions>
