@@ -13,9 +13,11 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
@@ -32,9 +34,11 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y fakeroot dpkg-dev rpm
 
       - name: Build
+        working-directory: pid-motor-sim
         run: mvn clean package -Djpackage.type=$TYPE
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
           name: PIDsim-${{ runner.os }}
-          path: target/installer/*
+          path: pid-motor-sim/target/installer/*
