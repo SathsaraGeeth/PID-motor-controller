@@ -19,8 +19,8 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '21'
+          distribution: temurin
+          java-version: 21
 
       - name: Set package type
         shell: bash
@@ -29,16 +29,19 @@ jobs:
           if [ "$RUNNER_OS" == "Windows" ]; then echo "TYPE=EXE" >> $GITHUB_ENV; fi
           if [ "$RUNNER_OS" == "macOS" ]; then echo "TYPE=DMG" >> $GITHUB_ENV; fi
 
-      - name: Install Linux deps
+      - name: Debug package type
+        run: echo "Building package type = ${{ env.TYPE }}"
+
+      - name: Install Linux dependencies
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y fakeroot dpkg-dev rpm
 
-      - name: Build
+      - name: Build with Maven
         working-directory: pid-motor-sim
-        run: mvn clean package -Djpackage.type=$TYPE
+        run: mvn -B clean package -Djpackage.type=${{ env.TYPE }}
 
-      - name: Upload artifact
+      - name: Upload installer
         uses: actions/upload-artifact@v4
         with:
           name: PIDsim-${{ runner.os }}
-          path: pid-motor-sim/target/installer/*
+          path: pid-motor-sim/target/installer/**
