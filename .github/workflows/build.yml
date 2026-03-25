@@ -8,7 +8,13 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            type: DEB
+          - os: windows-latest
+            type: EXE
+          - os: macos-latest
+            type: DMG
 
     runs-on: ${{ matrix.os }}
 
@@ -22,26 +28,16 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Set package type
-        shell: bash
-        run: |
-          if [ "$RUNNER_OS" == "Linux" ]; then echo "TYPE=DEB" >> $GITHUB_ENV; fi
-          if [ "$RUNNER_OS" == "Windows" ]; then echo "TYPE=EXE" >> $GITHUB_ENV; fi
-          if [ "$RUNNER_OS" == "macOS" ]; then echo "TYPE=DMG" >> $GITHUB_ENV; fi
-
-      - name: Debug package type
-        run: echo "Building package type = ${{ env.TYPE }}"
-
       - name: Install Linux dependencies
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y fakeroot dpkg-dev rpm
 
       - name: Build with Maven
         working-directory: pid-motor-sim
-        run: mvn -B clean package -Djpackage.type=${{ env.TYPE }}
+        run: mvn -B clean package -Djpackage.type=${{ matrix.type }}
 
       - name: Upload installer
         uses: actions/upload-artifact@v4
         with:
-          name: PIDsim-${{ runner.os }}
+          name: PIDsim-${{ matrix.os }}
           path: pid-motor-sim/target/installer/**
