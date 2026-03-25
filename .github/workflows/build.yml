@@ -1,8 +1,9 @@
-name: Build PIDsim Installers
+name: Build and Release PIDsim Installers
 
 on:
   push:
-    branches: [ main ]
+    tags:
+      - "v*"
 
 jobs:
   build:
@@ -35,11 +36,35 @@ jobs:
       - name: Build with Maven
         working-directory: pid-motor-sim
         shell: bash
-        run: |
-          mvn -B clean package "-Djpackage.type=${{ matrix.type }}"
+        run: mvn -B clean package "-Djpackage.type=${{ matrix.type }}"
 
-      - name: Upload installer
+      - name: Prepare release files
+        run: |
+          mkdir -p release
+          cp -r pid-motor-sim/target/installer/* release/
+
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: PIDsim-${{ matrix.os }}
-          path: pid-motor-sim/target/installer/**
+          name: ${{ matrix.os }}
+          path: release/*
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      - name: Show files
+        run: ls -R dist
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/**/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
