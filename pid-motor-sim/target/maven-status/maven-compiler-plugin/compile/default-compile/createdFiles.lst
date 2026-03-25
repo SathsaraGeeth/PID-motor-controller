@@ -1,8 +1,0 @@
-com/sim/PIDController.class
-com/sim/App$SliderCallback.class
-com/sim/App$PlotPanel.class
-com/sim/ClosedLoopSystem.class
-com/sim/Motor.class
-com/sim/GUI.class
-com/sim/App.class
-com/sim/Main.class

@@ -1,0 +1,40 @@
+name: Build PIDsim Installers
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Set package type
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then echo "TYPE=deb" >> $GITHUB_ENV; fi
+          if [ "$RUNNER_OS" == "Windows" ]; then echo "TYPE=exe" >> $GITHUB_ENV; fi
+          if [ "$RUNNER_OS" == "macOS" ]; then echo "TYPE=dmg" >> $GITHUB_ENV; fi
+
+      - name: Install Linux deps
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y fakeroot dpkg-dev rpm
+
+      - name: Build
+        run: mvn clean package -Djpackage.type=$TYPE
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PIDsim-${{ runner.os }}
+          path: target/installer/*
