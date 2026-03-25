@@ -34,7 +34,9 @@ jobs:
 
       - name: Build with Maven
         working-directory: pid-motor-sim
-        run: mvn -B clean package -Djpackage.type=${{ matrix.type }}
+        shell: bash
+        run: |
+          mvn -B clean package "-Djpackage.type=${{ matrix.type }}"
 
       - name: Upload installer
         uses: actions/upload-artifact@v4
