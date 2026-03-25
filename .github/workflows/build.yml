@@ -25,9 +25,9 @@ jobs:
       - name: Set package type
         shell: bash
         run: |
-          if [ "$RUNNER_OS" == "Linux" ]; then echo "TYPE=deb" >> $GITHUB_ENV; fi
-          if [ "$RUNNER_OS" == "Windows" ]; then echo "TYPE=exe" >> $GITHUB_ENV; fi
-          if [ "$RUNNER_OS" == "macOS" ]; then echo "TYPE=dmg" >> $GITHUB_ENV; fi
+          if [ "$RUNNER_OS" == "Linux" ]; then echo "TYPE=DEB" >> $GITHUB_ENV; fi
+          if [ "$RUNNER_OS" == "Windows" ]; then echo "TYPE=EXE" >> $GITHUB_ENV; fi
+          if [ "$RUNNER_OS" == "macOS" ]; then echo "TYPE=DMG" >> $GITHUB_ENV; fi
 
       - name: Install Linux deps
         if: runner.os == 'Linux'
