@@ -31,7 +31,6 @@ public class Motor {
         this.v = initialVelocity;
         this.b = dampingFactor;
     }
-
     public void update(double u, double dt) {
         v += (u - b * v) * dt;
     }
