@@ -10,33 +10,30 @@ II. Circuit Implementation.
 analog-circuit/sim
 - current circuit is adapted from https://github.com/vscheyer/Analog_PID_MC.git.
 
-2. Breadboard Prototype.
 
-2.1. Analog circuit
-- motor + position sensor + speed sensor
-- motor driver
-- adder
-- scalar multiplier
-- integrator
-- differentiator
-- power
+2. Hardware Implementation
 
-2.2. Sampler
-- sampling params
-i. setpoint
-ii. process variables (speed and position)
-iii. process vaiable control choose toggle
-iv. control signal (P, I, D, and after add)
-v. PID params
-- fixed rate over uart
-- frame_format = [timestamp, mode, setpoint, speed, position, kp, kd, ki, control signal, delimeter]
-timestamp - 32bits
-mode - 8bits
-else - 16bits
-delimieter - 8bits 10101010
-2.3. Applicatin layer
-- plot data
-- log
-- system identification
-- model based analysis and prediciton
-- pid estimation (Ziegler–Nichols/Cohen–Coon)
+2.1. Analog Circuit
+- Motor with speed sensor
+- Motor driver
+- Adder (summing P, I, D signals)
+- Scalar multiplier (gain adjustment)
+- Integrator
+- Differentiator
+- Power supply
+
+2.2. Sampler (Arduino)
+- Sampling parameters:
+  i. Setpoint
+  ii. Process variable: speed
+  iii. Control signal (P, I, D, after sum)
+  iv. PID gains (Kp, Ki, Kd)
+- Fixed-rate sampling over UART
+
+2.3. Application Layer (Java GUI)
+- Real-time data plotting
+- Logging for post-analysis
+- System identification
+- Model-based analysis and prediction
+- PID estimation (Ziegler–Nichols / Cohen–Coon)
+- Intelli mode: outputs PWM control signal computed by the model
