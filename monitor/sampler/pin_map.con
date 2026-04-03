@@ -1,0 +1,10 @@
+// Monitor
+MODE     = D2
+SETPOINT = A0
+SPEED    = D3
+KP       = A1
+KI       = A2
+KD        = A3
+CONTROL_M  = A4
+// Control
+CONTROL   = A5
