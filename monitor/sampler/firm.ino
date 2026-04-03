@@ -1,7 +1,14 @@
 // Frame format: [timestamp, setpoint, speed, Kp, Ki, Kd, control_m, delimiter]
 //   - Timestamp: 32 bits
 //   - All others: 16 bits
-//   - Delimiter: 8 bits (0xAA)
+//   - Delimiter: 8 bits
+        // -> ACK to APP (0xFF)  (when the app sends the control)
+        // -> Otherwise  (0xAA)
+
+// The App send this type of frame only in the control mode
+// Frame format: [control_c, delimiter]
+        // delimiter: 8 bits (0x77)
+        // must ACKed untill the app retrasmits same frame
 
 #include <Arduino.h>
 
@@ -31,7 +38,7 @@ void setup() {
   Serial.begin(230400);
   pinMode(CONTROL_C_PIN, OUTPUT);
 
-  ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0); // ADC enable, prescaler 128
+  ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
 
   noInterrupts();
   TCCR1A = 0;
@@ -59,6 +66,17 @@ void loop() {
     uint16_t control_m  = readADC(5);
 
     sendUARTFrame(setpoint, speed, kp, ki, kd, control_m);
+  }
+
+  if (Serial.available() >= 3) {
+    uint8_t buf[3];
+    Serial.readBytes(buf, 3);
+    if (buf[2] == 0x77) {
+      uint16_t control_c = buf[0] | (buf[1] << 8);
+      analogWrite(CONTROL_C_PIN, map(control_c, 0, 1023, 0, 255));
+      Serial.write(0xFF); // ACK
+    } else {
+    }
   }
 }
 
