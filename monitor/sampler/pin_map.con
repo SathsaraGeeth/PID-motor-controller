@@ -4,5 +4,6 @@ SPEED      = A1
 KP         = A2
 KI         = A3
 KD         = A4
+CONTROL_M  = A5
 // Control
-CONTROL    = A5
+CONTROL_C  = D2
