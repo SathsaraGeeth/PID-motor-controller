@@ -8,7 +8,7 @@
 // The App send this type of frame only in the control mode
 // Frame format: [control_c, delimiter]
         // delimiter: 8 bits (0x77)
-        // must ACKed untill the app retrasmits same frame
+        // must ACKed, until the app retransmits the same frame
 
 #include <Arduino.h>
 
